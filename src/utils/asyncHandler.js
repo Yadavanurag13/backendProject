@@ -1,33 +1,31 @@
 const asyncHandler = (requestHandler) => {
     (req, res, next) => {
-        Promise.resolve(requestHandler(req, res, next))
-        .reject((err) => next(err))
+        Promise.resolve(requestHandler(req, res, next)).catch((err) => next(err))
     }
 }
-
-
 export {asyncHandler}
 
+//          This was try cath method
 //const asyncHandler = () => {}
 
-//const asyncHandler = (function) => {() => {}}
+//when we have to pas function in another function we do like it
+//const asyncHandler = (func) => {(func) => {}}
 
-//const asyncHandler = (function) => async() => {}
+//we remove of the {} for standart practice
+//const asyncHandler = (func) => () => {}
 
-//higherorder function
 
 
-//      **** This is a wrapper so that we can use this to execute our fucntion
 
-// const asyncHandler = (fn) => async(req, res, next) => {
-//     try {
-//         await fn(req, res, next)
-//     } catch (error) {
-//         res.status(err.code || 500).json({
-//             success: false,
-//             message: err.message
-//         })
-//     }
-// }
 
-//may be kisi production me aise n mile
+/*
+const asyncHandler = (fn) => async(err, req, res, next) => {
+    try {
+        await fn(err, req, res, next)
+    } catch (err) {
+        res.status(err.code || 500).json({
+            success: false,
+            message: err.message
+        })
+    }
+}*/
