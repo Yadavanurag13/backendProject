@@ -52,7 +52,7 @@ const userSchema = new mongoose.Schema(
     }
 )
 
-//this method will encrypt the password
+//this method will encrypt the password and return next for the middleware
 userSchema.pre("save", async function (next){
     if(this.isModified("password")) {
         this.password = bcrypt.hash(this.password, 10)
@@ -61,10 +61,14 @@ userSchema.pre("save", async function (next){
     return next();
 })
 
+//password authentication which means the password that i am getting
+//is matching with passwrod stored in database
 userSchema.methods.isPasswordCorrect = async function(password) {
     return await bcrypt.compare(password, this.password)
 }
 
+
+//we need to generate token
 userSchema.methods.generateAccessToken = function(){
     return Jwt.sign(
         {
@@ -79,6 +83,9 @@ userSchema.methods.generateAccessToken = function(){
         }
     )
 }
+
+//token generation for refresh and it's generation is same as accestoken genertion
+//this requried less payload
 userSchema.methods.generateRefereshToken = function(){
     return Jwt.sign(
         {

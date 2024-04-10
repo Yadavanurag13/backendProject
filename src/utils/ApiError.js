@@ -4,9 +4,10 @@ class ApiError extends Error{
         message= "Something went wrong",
         errors = [],
         stack = ""
-    ){
+    )
+    {
         super(message)
-        this.statusCode
+        this.statusCode = statusCode
         this.data = null
         this.message = message
         this.success = false
