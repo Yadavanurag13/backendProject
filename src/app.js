@@ -4,6 +4,8 @@ import express from "express"
 import cookieParser from "cookie-parser"
 import cors from "cors"
 
+import bodyParser from "body-parser"
+
 //it's a common name give to app created by using express
 const app = express()
 
@@ -24,7 +26,7 @@ app.use(express.urlencoded({extended: true, limit: "16kb"})) // this will also w
 app.use(express.static("public"))
 
 //cookieParser
-app.use(cookieParser)
+app.use(cookieParser())
 
 
 
@@ -39,4 +41,4 @@ app.use("/api/v1/users", userRouter)
 //http://localost:8000/api/v1/users/
 
 
-export {app}
+export { app }
