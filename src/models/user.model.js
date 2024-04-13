@@ -1,37 +1,36 @@
 import mongoose, {Schema} from "mongoose";
-import  Jwt  from "jsonwebtoken";
+import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
-const userSchema = new mongoose.Schema(
+const userSchema = new Schema(
     {
         username: {
-            type: String, 
+            type: String,
             required: true,
             unique: true,
             lowercase: true,
-            index: true,
-            trim: true
+            trim: true, 
+            index: true
         },
         email: {
-            type: String, 
+            type: String,
             required: true,
             unique: true,
-            trim: true,
-            lowercase: true,
+            lowecase: true,
+            trim: true, 
         },
-        fullname: {
-            type: String, 
+        fullName: {
+            type: String,
             required: true,
-            lowercase: true,
-            trim: true,
+            trim: true, 
             index: true
         },
         avatar: {
-            type: String,//cloudnary url
+            type: String, // cloudinary url
             required: true,
         },
-        coverimage: {
-            type: String,
+        coverImage: {
+            type: String, // cloudinary url
         },
         watchHistory: [
             {
@@ -40,60 +39,53 @@ const userSchema = new mongoose.Schema(
             }
         ],
         password: {
-            type: String, 
-            required: [true, 'Password is required'],
+            type: String,
+            required: [true, 'Password is required']
         },
         refreshToken: {
             type: String
         }
-    }, 
+
+    },
     {
         timestamps: true
     }
 )
 
-//this method will encrypt the password and return next for the middleware
-userSchema.pre("save", async function (next){
-    if(this.isModified("password")) {
-        this.password = bcrypt.hash(this.password, 10)
-        next()
-    }
-    return next();
+userSchema.pre("save", async function (next) {
+    if(!this.isModified("password")) return next();
+
+    this.password = await bcrypt.hash(this.password, 10)
+    next()
 })
 
-//password authentication which means the password that i am getting
-//is matching with passwrod stored in database
-userSchema.methods.isPasswordCorrect = async function(password) {
+userSchema.methods.isPasswordCorrect = async function(password){
     return await bcrypt.compare(password, this.password)
 }
 
-
-//we need to generate token
 userSchema.methods.generateAccessToken = function(){
-    return Jwt.sign(
+    return jwt.sign(
         {
             _id: this._id,
             email: this.email,
             username: this.username,
-            fullname: this.fullname,
+            fullName: this.fullName
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-            expiresIn: process.env.ACCESS_TOKEN_SECRET
+            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
         }
     )
 }
-
-//token generation for refresh and it's generation is same as accestoken genertion
-//this requried less payload
-userSchema.methods.generateRefereshToken = function(){
-    return Jwt.sign(
+userSchema.methods.generateRefreshToken = function(){
+    return jwt.sign(
         {
             _id: this._id,
+            
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
-            expiresIn: process.env.REFRESH_TOKEN_SECRET
+            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
         }
     )
 }
