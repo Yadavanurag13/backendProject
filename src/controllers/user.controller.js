@@ -51,18 +51,22 @@ const registerUser = asyncHandler(async (req, res) => {
     //check for coverimage and avatar is locally provided or not
 
     //multer gives local path of the avatar
-    const avatarLocalPath = req.files?.avatar[0]?.path
 
-    const coverImageLocalPath = req.files?.coverfile[0]?.path
-
-
+    let avatarLocalPath;
+    if (req.files && Array.isArray(req.files.avatar) && req.files.avatar.length > 0) {
+        avatarLocalPath = req.files.avatar[0].path
+    }
+    let coverimageLocalPath;
+    if (req.files && Array.isArray(req.files.coverimage) && req.files.coverimage.length > 0) {
+        coverimageLocalPath = req.files.coverimage[0].path
+    }
     if(!avatarLocalPath) {
         throw new ApiError(400, "avatar file is required")
     }
 
     //uploading image on cloudinary
     const avatar = await uploadOnCloudinary(avatarLocalPath)
-    const coverimage = await uploadOnCloudinary(coverImageLocalPath)
+    const coverimage = await uploadOnCloudinary(coverimageLocalPath)
 
     if(!avatar) {
         throw new ApiError(400, "avatar file is required")
