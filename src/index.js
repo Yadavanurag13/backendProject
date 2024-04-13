@@ -9,7 +9,7 @@ import { DB_NAME } from "./constants.js";
 
 //this is standard way to config this dotenv
 dotenv.config({
-    path: './env'
+    path: './.env'
 }) 
 
 import connectDB from "./db/index.js";
